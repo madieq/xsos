@@ -23,12 +23,12 @@ export default class RouteExecuter implements BaseRouter {
         let players = mongo._getCollection('players')
         let games = mongo._getCollection('games')
 
-        let user_round = data.user.game.players[data.user.game.round_counter % 2]
+        let user_round = data.user.game.players[data.user.game.step_counter % 2]
         if (user_round !== data.user.user)
             throw ErrorFactory.CREATE('INVALID_ACTION', 'user_round = ' + user_round)
 
         let cell_position = data.body.cell
-        let current_mark = data.user.game.round_counter % 2 === 0 ? 'x' : 'o'
+        let current_mark = data.user.game.step_counter % 2 === 0 ? 'x' : 'o'
         let b = games.initializeOrderedBulkOp()
         b.find({ _id: data.user.game._id }).updateOne({ ['cells.' + cell_position]: current_mark })
         await b.execute()
@@ -41,7 +41,7 @@ export default class RouteExecuter implements BaseRouter {
             if (f === 0) {
                 await games.updateOne({ _id: data.user.game._id }, { $set: { state: 'end' } })
             } else {
-                await games.updateOne({ _id: data.user.game._id }, { $inc: { round_counter: 1 } })
+                await games.updateOne({ _id: data.user.game._id }, { $inc: { step_counter: 1 } })
             }
         }
 

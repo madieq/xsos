@@ -15,6 +15,7 @@ export default class RouteExecuter implements BaseRouter {
                 players: [],
                 round_wins: [0, 0],
                 players_approved: 0,
+                step_counter: 0,
                 round_counter: 0,
                 winner: '',
                 cells: [0, 0, 0, 0, 0, 0, 0, 0, 0],

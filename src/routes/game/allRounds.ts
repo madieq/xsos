@@ -10,6 +10,6 @@ export default class RouteExecuter implements BaseRouter {
         let games = mongo._getCollection('games')
 
         let r = await games.find({ state: 'end' }).toArray()
-        data.ok({ ok: true, data: r.map(i => ({ winner: i.winner, empty_cells_count: i.cells.filter(c => c === 0).length, round_counter: i.round_counter })) })
+        data.ok({ ok: true, data: r.map(i => ({ winner: i.winner, empty_cells_count: i.cells.filter(c => c === 0).length, step_counter: i.step_counter })) })
     }
 }
