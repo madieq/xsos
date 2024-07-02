@@ -27,55 +27,80 @@ export default class RouteExecuter implements BaseRouter {
         if (user_round !== data.user.user)
             throw ErrorFactory.CREATE('INVALID_ACTION', 'user_round = ' + user_round)
 
-        let cell_position=data.body.cell
+        let cell_position = data.body.cell
         let current_mark = data.user.game.round_counter % 2 === 0 ? 'x' : 'o'
-        let b=games.initializeOrderedBulkOp()
-        b.find({ _id:data.user.game._id}).updateOne({['cells.'+cell_position]:current_mark})
+        let b = games.initializeOrderedBulkOp()
+        b.find({ _id: data.user.game._id }).updateOne({ ['cells.' + cell_position]: current_mark })
         await b.execute()
+        data.user.game.cells[cell_position] = current_mark
 
-        let r = await games.findOne({ _id:data.user.game._id})
+        if (this.isWinned(data.user.game.cells, current_mark)) {
+            await games.updateOne({ _id: data.user.game._id }, { $set: { state: 'end', winner: user_round } })
+        } else {
+            let f = data.user.game.cells.find(i => i === 0)
+            if (f === 0) {
+                await games.updateOne({ _id: data.user.game._id }, { $set: { state: 'end' } })
+            } else {
+                await games.updateOne({ _id: data.user.game._id }, { $inc: { round_counter: 1 } })
+            }
+        }
 
-        
+        let r = await games.findOne({ _id: data.user.game._id })
+        data.user.game = r
         data.ok({ ok: true, data: r })
     }
-    draw_mask = [[1, 1, 1, 1, 1, 1, 1, 1, 1]]
-    win_mask = [
-        [
-            1, 0, 0,
-            0, 1, 0,
-            0, 0, 1
-        ],
-        [
-            1, 1, 1,
-            0, 0, 0,
-            0, 0, 0
-        ],
-        [
-            0, 0, 0,
-            1, 1, 1,
-            0, 0, 0
-        ],
-        [
-            0, 0, 0,
-            0, 0, 0,
-            1, 1, 1
-        ],
-        [
-            1, 0, 0,
-            1, 0, 0,
-            1, 0, 0
-        ],
-        [
-            0, 1, 0,
-            0, 1, 0,
-            0, 1, 0
-        ],
-        [
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1
+    isWinned(cell, type) {
+        let win_mask = [
+            [
+                1, 0, 0,
+                0, 1, 0,
+                0, 0, 1
+            ],
+            [
+                1, 1, 1,
+                0, 0, 0,
+                0, 0, 0
+            ],
+            [
+                0, 0, 0,
+                1, 1, 1,
+                0, 0, 0
+            ],
+            [
+                0, 0, 0,
+                0, 0, 0,
+                1, 1, 1
+            ],
+            [
+                1, 0, 0,
+                1, 0, 0,
+                1, 0, 0
+            ],
+            [
+                0, 1, 0,
+                0, 1, 0,
+                0, 1, 0
+            ],
+            [
+                0, 0, 1,
+                0, 0, 1,
+                0, 0, 1
+            ]
         ]
-    ]
+        let maskcell = cell.map(i => i === type)
+        for (let item of win_mask) {
+            let matched = 0
+            for (let i = 0; i < 9; i++) {
+                if (item[i] === 1)
+                    if (maskcell[i] === true)
+                        matched++
+            }
+            if (matched >= 3)
+                return true
+        }
+        return false
+    }
+
 }
 /* 
 find_game

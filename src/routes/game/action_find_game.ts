@@ -13,6 +13,7 @@ export default class RouteExecuter implements BaseRouter {
         b.find({ state: { $in: ['idle', 'players_waiting'] } }).upsert().update({
             $setOnInsert: {
                 players: [],
+                round_wins: [0, 0],
                 players_approved: 0,
                 round_counter: 0,
                 winner: '',
