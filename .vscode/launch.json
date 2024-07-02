@@ -1,0 +1,45 @@
+{
+    // Используйте IntelliSense, чтобы узнать о возможных атрибутах.
+    // Наведите указатель мыши, чтобы просмотреть описания существующих атрибутов.
+    // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "game",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            // "runtimeArgs": [
+            //     "-r",
+            //     "esm"
+            // ],
+            "envFile": "${workspaceFolder}/.env.example",
+            // "env": {
+            //     "UV_THREADPOOL_SIZE": "128",
+            // },
+            "program": "${workspaceFolder}/src/game.ts",
+            "outFiles": [
+                "!**/node_modules/**",
+                "${workspaceFolder}/dist/**/*.js",
+            ],
+        },
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "bot",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "envFile": "${workspaceFolder}/.env.example",
+            // "env": {
+            //     "UV_THREADPOOL_SIZE": "128",
+            // },
+            "program": "${workspaceFolder}/src/bot.ts",
+            "outFiles": [
+                "!**/node_modules/**",
+            ],
+        },
+    ]
+}

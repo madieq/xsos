@@ -1,0 +1,19 @@
+@URL=http://localhost:3011
+@AUTHTOKEN=USER_1
+
+###
+GET {{URL}}/ping
+
+###
+POST {{URL}}/register
+Content-Type: application/json
+
+{
+    "user":"user_001"
+}
+
+###
+GET {{URL}}/allRounds
+
+###
+GET {{URL}}/gameResults

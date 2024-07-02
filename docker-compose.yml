@@ -1,0 +1,22 @@
+version: '3.7'
+networks:
+  infra_1:
+    external: true
+services:
+    mongo:
+        image: "mongo:5"
+        networks:
+            - "infra_1"
+        restart: "always"
+        volumes:
+            - "/etc/localtime:/etc/localtime:ro"
+            - "./mongodb:/data/db"
+            # - "./:/etc/mongo"
+        # command: ["--config", "/etc/mongo/mongod.yml"]
+        ports: 
+            - "27117:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: "root"
+            MONGO_INITDB_ROOT_PASSWORD: "example"
+
+# docker exec some-mongo sh -c 'exec mongodump -d <database_name> --archive' > /some/path/on/your/host/all-collections.archive
